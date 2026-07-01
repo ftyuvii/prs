@@ -8,26 +8,26 @@ const userEmail = document.getElementById("user-email");
 const welcomeNameInline = document.getElementById("welcome-name-inline");
 const loadingScreen = document.getElementById("loading-screen");
 
-function setButtonsDisabled(state) {
-  if (googleBtn) googleBtn.disabled = state;
-}
-
 function hideLoading() {
   if (!loadingScreen) return;
   loadingScreen.style.opacity = "0";
-  setTimeout(() => {
-    loadingScreen.style.display = "none";
-  }, 250);
+  setTimeout(() => (loadingScreen.style.display = "none"), 250);
 }
 
-function getRedirectUrl() {
-  return window.location.href.split("?")[0];
+function setScreen(isLoggedIn) {
+  if (isLoggedIn) {
+    loginScreen?.classList.remove("screen--active");
+    homeScreen?.classList.add("screen--active");
+  } else {
+    homeScreen?.classList.remove("screen--active");
+    loginScreen?.classList.add("screen--active");
+  }
 }
 
-function showHome(user) {
+function setUser(user) {
   const name =
     user.fullName ||
-    user.username ||
+    user.firstName ||
     user.primaryEmailAddress?.emailAddress ||
     "Player";
 
@@ -35,98 +35,82 @@ function showHome(user) {
   const avatar = user.imageUrl;
 
   if (userName) userName.textContent = name;
-  if (welcomeNameInline) welcomeNameInline.textContent = `, ${name}`;
   if (userEmail) userEmail.textContent = email;
+  if (welcomeNameInline) welcomeNameInline.textContent = `, ${name}`;
 
   if (userAvatar) {
     userAvatar.src =
       avatar ||
-      `https://ui-avatars.com/api/?name=${encodeURIComponent(
-        name
-      )}&background=2f5cff&color=ffffff`;
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2f5cff&color=fff`;
   }
-
-  loginScreen?.classList.remove("screen--active");
-  homeScreen?.classList.add("screen--active");
 }
 
-function showLogin() {
-  homeScreen?.classList.remove("screen--active");
-  loginScreen?.classList.add("screen--active");
-  setButtonsDisabled(false);
-}
-
-async function signInWithGoogle() {
+async function signInGoogle() {
   try {
-    setButtonsDisabled(true);
-    document.body.classList.add("auth-loading");
-
     const clerk = window.Clerk;
 
     if (!clerk) throw new Error("Clerk not loaded");
 
-    await clerk.openSignIn({
+    await clerk.signIn.authenticateWithRedirect({
       strategy: "oauth_google",
-      redirectUrl: getRedirectUrl(),
-      afterSignInUrl: getRedirectUrl(),
-      afterSignUpUrl: getRedirectUrl()
+      redirectUrl: window.location.href,
+      redirectUrlComplete: window.location.href
     });
-  } catch (error) {
-    console.error("Login error:", error);
-    alert("Google login failed. Try again.");
-    document.body.classList.remove("auth-loading");
-    setButtonsDisabled(false);
+
+  } catch (err) {
+    console.error("Login error:", err);
+    alert("Login failed. Try again.");
   }
 }
 
 async function logout() {
   try {
-    const clerk = window.Clerk;
-    if (!clerk) return;
-
-    await clerk.signOut();
-    showLogin();
-  } catch (error) {
-    console.error("Logout error:", error);
+    await window.Clerk.signOut();
+    setScreen(false);
+  } catch (err) {
+    console.error(err);
   }
 }
 
-async function initClerk() {
+async function init() {
   const clerk = window.Clerk;
 
   if (!clerk) {
-    console.error("Clerk failed to load");
+    console.error("Clerk not loaded");
     hideLoading();
-    showLogin();
+    setScreen(false);
     return;
   }
 
   await clerk.load();
 
+  // IMPORTANT: completes OAuth redirect flow
   try {
     await clerk.handleRedirectCallback();
-  } catch (e) {
-    // ignore if no redirect
-  }
-
-  hideLoading();
-  document.body.classList.remove("auth-loading");
+  } catch (e) {}
 
   const user = clerk.user;
 
+  hideLoading();
+
   if (user) {
-    showHome(user);
+    setUser(user);
+    setScreen(true);
   } else {
-    showLogin();
+    setScreen(false);
   }
 
   clerk.addListener(({ user }) => {
-    if (user) showHome(user);
-    else showLogin();
+    if (user) {
+      setUser(user);
+      setScreen(true);
+    } else {
+      setScreen(false);
+    }
   });
 }
 
-googleBtn?.addEventListener("click", signInWithGoogle);
+googleBtn?.addEventListener("click", signInGoogle);
 logoutBtn?.addEventListener("click", logout);
 
-window.addEventListener("load", initClerk);
+window.addEventListener("load", init);
