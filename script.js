@@ -61,7 +61,7 @@ function showHome(user) {
 function showLogin() {
   if (homeScreen) homeScreen.classList.remove("screen--active");
   if (loginScreen) loginScreen.classList.add("screen--active");
-  
+
   initializeGoogleSignIn();
 }
 
@@ -73,7 +73,7 @@ function initializeGoogleSignIn() {
 
   google.accounts.id.initialize({
     client_id: "236039497167-o8ptvml7q8pkhb8m0b9lqb3rc7u66on2.apps.googleusercontent.com",
-    callback: handleCredentialResponse,
+    callback: window.handleCredentialResponse,
     context: "signin",
     ux_mode: "popup",
     auto_select: false
@@ -91,7 +91,7 @@ function initializeGoogleSignIn() {
   }
 }
 
-async function handleCredentialResponse(response) {
+window.handleCredentialResponse = async function(response) {
   try {
     if (loadingScreen) {
       loadingScreen.style.display = "flex";
@@ -104,7 +104,7 @@ async function handleCredentialResponse(response) {
     hideLoading();
     alert("Authentication failed.");
   }
-}
+};
 
 async function logout() {
   try {
@@ -137,20 +137,4 @@ window.addEventListener("resize", () => {
   if (loginScreen && loginScreen.classList.contains("screen--active")) {
     initializeGoogleSignIn();
   }
-
-window.handleCredentialResponse = async function(response) {
-  try {
-    if (loadingScreen) {
-      loadingScreen.style.display = "flex";
-      loadingScreen.style.opacity = "1";
-    }
-    const credential = GoogleAuthProvider.credential(response.credential);
-    await signInWithCredential(auth, credential);
-  } catch (error) {
-    console.error(error);
-    hideLoading();
-    alert("Authentication failed.");
-  }
 });
-
-
