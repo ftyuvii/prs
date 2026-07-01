@@ -137,4 +137,20 @@ window.addEventListener("resize", () => {
   if (loginScreen && loginScreen.classList.contains("screen--active")) {
     initializeGoogleSignIn();
   }
+
+window.handleCredentialResponse = async function(response) {
+  try {
+    if (loadingScreen) {
+      loadingScreen.style.display = "flex";
+      loadingScreen.style.opacity = "1";
+    }
+    const credential = GoogleAuthProvider.credential(response.credential);
+    await signInWithCredential(auth, credential);
+  } catch (error) {
+    console.error(error);
+    hideLoading();
+    alert("Authentication failed.");
+  }
 });
+
+
