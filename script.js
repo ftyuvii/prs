@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/fireba
 import {
   getAuth,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithCredential,
   signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
@@ -20,24 +20,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-const googleProvider = new GoogleAuthProvider();
-googleProvider.setCustomParameters({
-  prompt: "select_account"
-});
-
 const loginScreen = document.getElementById("login-screen");
 const homeScreen = document.getElementById("home-screen");
-const googleBtn = document.getElementById("google-btn");
 const logoutBtn = document.getElementById("logout-btn");
 const userAvatar = document.getElementById("user-avatar");
 const userName = document.getElementById("user-name");
 const userEmail = document.getElementById("user-email");
 const welcomeNameInline = document.getElementById("welcome-name-inline");
 const loadingScreen = document.getElementById("loading-screen");
-
-function setButtonsDisabled(state) {
-  if (googleBtn) googleBtn.disabled = state;
-}
 
 function hideLoading() {
   if (!loadingScreen) return;
@@ -71,20 +61,32 @@ function showHome(user) {
 function showLogin() {
   if (homeScreen) homeScreen.classList.remove("screen--active");
   if (loginScreen) loginScreen.classList.add("screen--active");
-  setButtonsDisabled(false);
+  
+  window.onload = () => {
+    google.accounts.id.initialize({
+      client_id: "236039497167-o8ptvml7q8pkhb8m0b9lqb3rc7u66on2.apps.googleusercontent.com",
+      callback: handleCredentialResponse,
+      context: "signin",
+      ux_mode: "popup",
+      auto_select: false
+    });
+
+    google.accounts.id.renderButton(
+      document.getElementById("google-btn"),
+      { theme: "filled_blue", size: "large", text: "continue_with", width: 320, shape: "rectangular" }
+    );
+    
+    google.accounts.id.prompt();
+  };
 }
 
-async function signInWithGoogle() {
+async function handleCredentialResponse(response) {
   try {
-    setButtonsDisabled(true);
-    document.body.classList.add("auth-loading");
-    await signInWithPopup(auth, googleProvider);
+    const credential = GoogleAuthProvider.credential(response.credential);
+    await signInWithCredential(auth, credential);
   } catch (error) {
     console.error(error);
-    alert("Google login failed.");
-  } finally {
-    document.body.classList.remove("auth-loading");
-    setButtonsDisabled(false);
+    alert("Authentication failed.");
   }
 }
 
@@ -105,10 +107,6 @@ onAuthStateChanged(auth, (user) => {
     showLogin();
   }
 });
-
-if (googleBtn) {
-  googleBtn.addEventListener("click", signInWithGoogle);
-}
 
 if (logoutBtn) {
   logoutBtn.addEventListener("click", logout);
