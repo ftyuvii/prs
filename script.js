@@ -43,33 +43,25 @@ function showLogin() {
   loginScreen?.classList.add("screen--active");
 }
 
-function getClerk() {
-  return window.Clerk;
-}
-
 async function signInWithGoogle() {
   try {
-    const clerk = getClerk();
+    const clerk = window.Clerk;
     if (!clerk) throw new Error("Clerk not loaded");
 
-    // ✅ CORRECT v6 method (safe redirect flow)
-    await clerk.redirectToSignIn({
-      redirectUrl: window.location.href,
-      signInFallbackRedirectUrl: window.location.href
+    // ✅ POPUP LOGIN (NO REDIRECT)
+    await clerk.openSignIn({
+      strategy: "oauth_google"
     });
 
   } catch (err) {
-    console.error("LOGIN FAILED:", err);
+    console.error("LOGIN ERROR:", err);
     alert("Login failed. Check console.");
   }
 }
 
 async function logout() {
   try {
-    const clerk = getClerk();
-    if (!clerk) return;
-
-    await clerk.signOut();
+    await window.Clerk.signOut();
     showLogin();
   } catch (err) {
     console.error(err);
@@ -77,7 +69,7 @@ async function logout() {
 }
 
 async function initClerk() {
-  const clerk = getClerk();
+  const clerk = window.Clerk;
 
   if (!clerk) {
     console.error("Clerk not loaded");
@@ -87,11 +79,6 @@ async function initClerk() {
   }
 
   await clerk.load();
-
-  // handle redirect return safely
-  try {
-    await clerk.handleRedirectCallback();
-  } catch (e) {}
 
   hideLoading();
 
