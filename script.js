@@ -11,20 +11,10 @@ const loadingScreen = document.getElementById("loading-screen");
 function hideLoading() {
   if (!loadingScreen) return;
   loadingScreen.style.opacity = "0";
-  setTimeout(() => (loadingScreen.style.display = "none"), 250);
+  setTimeout(() => (loadingScreen.style.display = "none"), 200);
 }
 
-function setScreen(isLoggedIn) {
-  if (isLoggedIn) {
-    loginScreen?.classList.remove("screen--active");
-    homeScreen?.classList.add("screen--active");
-  } else {
-    homeScreen?.classList.remove("screen--active");
-    loginScreen?.classList.add("screen--active");
-  }
-}
-
-function setUser(user) {
+function showHome(user) {
   const name =
     user.fullName ||
     user.firstName ||
@@ -34,83 +24,92 @@ function setUser(user) {
   const email = user.primaryEmailAddress?.emailAddress || "";
   const avatar = user.imageUrl;
 
-  if (userName) userName.textContent = name;
-  if (userEmail) userEmail.textContent = email;
-  if (welcomeNameInline) welcomeNameInline.textContent = `, ${name}`;
+  userName && (userName.textContent = name);
+  userEmail && (userEmail.textContent = email);
+  welcomeNameInline && (welcomeNameInline.textContent = `, ${name}`);
 
   if (userAvatar) {
     userAvatar.src =
       avatar ||
       `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2f5cff&color=fff`;
   }
+
+  loginScreen?.classList.remove("screen--active");
+  homeScreen?.classList.add("screen--active");
 }
 
-async function signInGoogle() {
-  try {
-    const clerk = window.Clerk;
+function showLogin() {
+  homeScreen?.classList.remove("screen--active");
+  loginScreen?.classList.add("screen--active");
+}
 
+function getClerk() {
+  return window.Clerk;
+}
+
+async function signInWithGoogle() {
+  try {
+    const clerk = getClerk();
     if (!clerk) throw new Error("Clerk not loaded");
 
-    await clerk.signIn.authenticateWithRedirect({
-      strategy: "oauth_google",
+    // ✅ CORRECT v6 method (safe redirect flow)
+    await clerk.redirectToSignIn({
       redirectUrl: window.location.href,
-      redirectUrlComplete: window.location.href
+      signInFallbackRedirectUrl: window.location.href
     });
 
   } catch (err) {
-    console.error("Login error:", err);
-    alert("Login failed. Try again.");
+    console.error("LOGIN FAILED:", err);
+    alert("Login failed. Check console.");
   }
 }
 
 async function logout() {
   try {
-    await window.Clerk.signOut();
-    setScreen(false);
+    const clerk = getClerk();
+    if (!clerk) return;
+
+    await clerk.signOut();
+    showLogin();
   } catch (err) {
     console.error(err);
   }
 }
 
-async function init() {
-  const clerk = window.Clerk;
+async function initClerk() {
+  const clerk = getClerk();
 
   if (!clerk) {
     console.error("Clerk not loaded");
     hideLoading();
-    setScreen(false);
+    showLogin();
     return;
   }
 
   await clerk.load();
 
-  // IMPORTANT: completes OAuth redirect flow
+  // handle redirect return safely
   try {
     await clerk.handleRedirectCallback();
   } catch (e) {}
 
-  const user = clerk.user;
-
   hideLoading();
 
+  const user = clerk.user;
+
   if (user) {
-    setUser(user);
-    setScreen(true);
+    showHome(user);
   } else {
-    setScreen(false);
+    showLogin();
   }
 
   clerk.addListener(({ user }) => {
-    if (user) {
-      setUser(user);
-      setScreen(true);
-    } else {
-      setScreen(false);
-    }
+    if (user) showHome(user);
+    else showLogin();
   });
 }
 
-googleBtn?.addEventListener("click", signInGoogle);
+googleBtn?.addEventListener("click", signInWithGoogle);
 logoutBtn?.addEventListener("click", logout);
 
-window.addEventListener("load", init);
+window.addEventListener("load", initClerk);
