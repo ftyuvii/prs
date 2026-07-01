@@ -50,7 +50,7 @@ function showHome(user) {
     if (avatar) {
       userAvatar.src = avatar;
     } else {
-      userAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2f5cff&color=ffffff`;
+      userAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=3462ff&color=ffffff`;
     }
   }
 
@@ -62,30 +62,46 @@ function showLogin() {
   if (homeScreen) homeScreen.classList.remove("screen--active");
   if (loginScreen) loginScreen.classList.add("screen--active");
   
-  window.onload = () => {
-    google.accounts.id.initialize({
-      client_id: "236039497167-o8ptvml7q8pkhb8m0b9lqb3rc7u66on2.apps.googleusercontent.com",
-      callback: handleCredentialResponse,
-      context: "signin",
-      ux_mode: "popup",
-      auto_select: false
-    });
+  initializeGoogleSignIn();
+}
 
-    google.accounts.id.renderButton(
-      document.getElementById("google-btn"),
-      { theme: "filled_blue", size: "large", text: "continue_with", width: 320, shape: "rectangular" }
-    );
-    
-    google.accounts.id.prompt();
-  };
+function initializeGoogleSignIn() {
+  if (typeof google === "undefined" || !google.accounts) {
+    setTimeout(initializeGoogleSignIn, 100);
+    return;
+  }
+
+  google.accounts.id.initialize({
+    client_id: "236039497167-o8ptvml7q8pkhb8m0b9lqb3rc7u66on2.apps.googleusercontent.com",
+    callback: handleCredentialResponse,
+    context: "signin",
+    ux_mode: "popup",
+    auto_select: false
+  });
+
+  const btnContainer = document.getElementById("google-btn");
+  if (btnContainer) {
+    google.accounts.id.renderButton(btnContainer, {
+      theme: "filled_blue",
+      size: "large",
+      text: "continue_with",
+      width: btnContainer.offsetWidth || 320,
+      shape: "rectangular"
+    });
+  }
 }
 
 async function handleCredentialResponse(response) {
   try {
+    if (loadingScreen) {
+      loadingScreen.style.display = "flex";
+      loadingScreen.style.opacity = "1";
+    }
     const credential = GoogleAuthProvider.credential(response.credential);
     await signInWithCredential(auth, credential);
   } catch (error) {
     console.error(error);
+    hideLoading();
     alert("Authentication failed.");
   }
 }
@@ -93,9 +109,14 @@ async function handleCredentialResponse(response) {
 async function logout() {
   try {
     if (homeScreen) homeScreen.classList.remove("screen--active");
+    if (loadingScreen) {
+      loadingScreen.style.display = "flex";
+      loadingScreen.style.opacity = "1";
+    }
     await signOut(auth);
   } catch (error) {
     console.error(error);
+    hideLoading();
   }
 }
 
@@ -111,3 +132,9 @@ onAuthStateChanged(auth, (user) => {
 if (logoutBtn) {
   logoutBtn.addEventListener("click", logout);
 }
+
+window.addEventListener("resize", () => {
+  if (loginScreen && loginScreen.classList.contains("screen--active")) {
+    initializeGoogleSignIn();
+  }
+});
