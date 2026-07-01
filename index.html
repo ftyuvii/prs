@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Persian Esports</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="loading-screen" class="loading-screen">
+  <div class="loading-spinner"></div>
+</div>
+
+<div id="login-screen" class="screen screen--active">
+
+  <div class="brand-panel">
+    <span class="brand-panel__mark" aria-hidden="true">V</span>
+
+    <div class="brand-panel__scanline" aria-hidden="true"></div>
+
+    <div class="brand-panel__content">
+
+      <div class="logo">
+        <span class="logo__mark">∆</span>
+        <span class="logo__word">Persian Esports</span>
+      </div>
+
+      <p class="brand-panel__tagline">
+        Built for competition.<br>
+        Backed by the roster.
+      </p>
+
+    </div>
+  </div>
+
+  <div class="auth-panel">
+
+    <div class="auth-card">
+
+      <span class="auth-card__eyebrow">ACCESS</span>
+
+      <h1 class="auth-card__title">
+        Sign in to Persian Esports
+      </h1>
+
+      <p class="auth-card__sub">
+        Continue with Google or Discord to access your account.
+      </p>
+
+      <button id="google-btn" class="auth-btn" type="button">
+
+        <span class="auth-btn__icon">
+          <svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true">
+            <path fill="#4285F4" d="M46.5 24.5c0-1.6-.15-3.15-.42-4.64H24v9.03h12.65c-.55 2.9-2.2 5.36-4.7 7.02v5.83h7.6c4.45-4.1 7-10.13 7-17.24z"/>
+            <path fill="#34A853" d="M24 47c6.35 0 11.67-2.1 15.55-5.66l-7.6-5.83c-2.11 1.4-4.8 2.24-7.95 2.24-6.11 0-11.29-4.12-13.14-9.66H2.99v6.02C6.85 41.86 14.8 47 24 47z"/>
+            <path fill="#FBBC05" d="M10.86 27.99A13.9 13.9 0 0 1 10.14 24c0-1.39.24-2.74.65-4.01v-6.02H2.99A22.94 22.94 0 0 0 1 24c0 3.71.89 7.22 2.99 10.03l7.87-6.04z"/>
+            <path fill="#EA4335" d="M24 9.5c3.45 0 6.55 1.19 8.99 3.52l6.74-6.74C35.65 2.38 30.33 0 24 0 14.8 0 6.85 5.14 2.99 12.97l7.87 6.02C12.71 13.62 17.89 9.5 24 9.5z"/>
+          </svg>
+        </span>
+
+        <span>Continue with Google</span>
+
+      </button>
+
+      <button id="discord-btn" class="auth-btn auth-btn--discord" type="button">
+
+        <span class="auth-btn__icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path fill="currentColor" d="M20.32 4.37a19.8 19.8 0 0 0-4.9-1.52.07.07 0 0 0-.08.04c-.21.38-.45.87-.61 1.26a18.3 18.3 0 0 0-5.48 0 12.6 12.6 0 0 0-.62-1.26.08.08 0 0 0-.08-.04c-1.7.3-3.37.8-4.9 1.52a.07.07 0 0 0-.03.03C.53 8.68-.32 12.87.1 17c0 .02.01.04.03.05a19.9 19.9 0 0 0 5.99 3.03.08.08 0 0 0 .08-.03c.46-.63.87-1.3 1.23-2a.08.08 0 0 0-.04-.11 13.1 13.1 0 0 1-1.87-.9.08.08 0 0 1 0-.13c.13-.09.25-.19.37-.28a.07.07 0 0 1 .08-.01c3.93 1.8 8.18 1.8 12.06 0a.07.07 0 0 1 .08.01c.12.1.24.19.37.28a.08.08 0 0 1 0 .13c-.6.35-1.22.65-1.87.9a.08.08 0 0 0-.04.11c.37.7.78 1.36 1.23 2a.08.08 0 0 0 .08.03A19.85 19.85 0 0 0 23.87 17c.02-.01.03-.03.03-.05.5-4.83-.83-9-3.55-12.6a.06.06 0 0 0-.03-.03zM8.02 14.4c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.1 2.15 2.42 0 1.34-.95 2.42-2.15 2.42zm7.97 0c-1.18 0-2.15-1.08-2.15-2.42 0-1.33.95-2.42 2.15-2.42 1.21 0 2.17 1.1 2.15 2.42 0 1.34-.94 2.42-2.15 2.42z"/>
+          </svg>
+        </span>
+
+        <span>Continue with Discord</span>
+
+      </button>
+
+      <p class="auth-card__terms">
+        By continuing, you agree to the Persian Esports Terms and Privacy Policy.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div id="home-screen" class="screen">
+
+  <header class="topbar">
+
+    <div class="logo">
+      <span class="logo__mark">∆</span>
+      <span class="logo__word">Persian Esports</span>
+    </div>
+
+    <div class="topbar__user">
+
+      <div class="user-avatar-wrap">
+        <img
+          id="user-avatar"
+          class="user-avatar"
+          src=""
+          alt="User Avatar"
+          referrerpolicy="no-referrer"
+        >
+      </div>
+
+      <div class="topbar__user-info">
+        <span id="user-name" class="user-name">Player</span>
+        <span id="user-email" class="user-email"></span>
+      </div>
+
+      <button
+        id="logout-btn"
+        class="icon-btn"
+        type="button"
+        aria-label="Sign Out"
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M16 16l4-4-4-4M20 12H9"/>
+        </svg>
+      </button>
+
+    </div>
+
+  </header>
+
+  <main class="home-main">
+
+    <section class="hero">
+
+      <span class="hero__eyebrow">Esports Center</span>
+
+      <h1>
+        Welcome back<span id="welcome-name-inline"></span>
+      </h1>
+
+      <p class="hero__sub">
+        Everything about the organization, roster, matches, and announcements in one place.
+      </p>
+
+    </section>
+
+    <section class="card-grid">
+
+      <article class="info-card">
+        <span class="info-card__tag">ROSTER</span>
+        <h2>Active Lineup</h2>
+        <p>Track player roles, status updates, and competitive performance.</p>
+      </article>
+
+      <article class="info-card">
+        <span class="info-card__tag">MATCHES</span>
+        <h2>Upcoming Fixtures</h2>
+        <p>Follow tournaments, scrims, qualifiers, and important schedules.</p>
+      </article>
+
+      <article class="info-card">
+        <span class="info-card__tag">ANNOUNCEMENTS</span>
+        <h2>Organization Updates</h2>
+        <p>Stay informed about roster moves, partnerships, and major news.</p>
+      </article>
+
+    </section>
+
+  </main>
+
+</div>
+
+<footer class="site-footer">
+  <p>© 2026 Persian Esports. All rights reserved.</p>
+</footer>
+
+<script type="module" src="script.js"></script>
+
+</body>
+</html>
