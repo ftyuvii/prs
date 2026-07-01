@@ -853,7 +853,7 @@
   (async () => {
     const { data } = await supabaseClient.auth.getSession();
     if(data && data.session){
-      window.location.href = 'main/home.html';
+      window.location.href = 'mains/home.html';
     }
   })();
 </script>
