@@ -2,7 +2,7 @@
   "active": true,
   "title": "Welcome Champs",
   "description": "In Persian Esports you can figure out a lot of free fire and BGMI tournaments, Our developers are still working on the site! Stay Updated for future versians.",
-  "image": "assets/announcement.jpg",
+  "image": "https://i.ibb.co/pvSVLqfd/announcement-jpg.png",
   "buttonText": "Follow",
   "buttonLink": "https://www.instagram.com/persian_esports.in/"
 }
