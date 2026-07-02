@@ -856,8 +856,9 @@ footer {
     .merch-img-wrapper {
         height: 280px;
     }
-}
-
+    .hamburger {
+        display: block;
+    }
     .nav-menu {
         position: fixed;
         left: -100%;
@@ -875,31 +876,25 @@ footer {
         border-top: 1px solid var(--border-color);
         z-index: 9999;
     }
-
     .nav-menu.active {
         left: 0;
     }
-
     .nav-menu a {
         font-size: 1.1rem;
         color: var(--text-white);
         display: block;
         width: 100%;
     }
-
     .section {
         padding: 90px 20px 50px 20px;
     }
-
     .hero-content h1 {
         font-size: 2.6rem;
     }
-
     .apple-carousel {
         padding-left: 0;
         gap: 1.2rem;
     }
-
     .carousel-card {
         flex: 0 0 85vw;
         height: 440px;
@@ -908,11 +903,9 @@ footer {
         background-repeat: no-repeat;
         padding: 2rem;
     }
-
     .support-container {
         padding: 2.5rem 1.5rem;
     }
-
     .team-card {
         width: 100%;
         max-width: 320px;
